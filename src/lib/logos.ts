@@ -97,7 +97,7 @@ export interface Logo {
   hex: string;
   family: Family;
   font: FontDef;
-  sharedHexWith?: string;
+  sharedHexWith?: string | undefined;
 }
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -109,8 +109,8 @@ export const LOGOS: Logo[] = RAW.map(([name, hex, family], i) => {
     name,
     hex,
     family,
-    font: FONTS[i % FONTS.length],
-    sharedHexWith: first !== i ? RAW[first][0] : undefined,
+    font: FONTS[i % FONTS.length]!,
+    sharedHexWith: first !== i ? RAW[first]![0] : undefined,
   };
 });
 
