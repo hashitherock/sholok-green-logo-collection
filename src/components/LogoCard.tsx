@@ -52,7 +52,7 @@ export function LogoCard({ logo }: { logo: Logo }) {
         {logo.sharedHexWith && (
           <p className="text-xs text-muted-foreground">Same shade as {logo.sharedHexWith}</p>
         )}
-        <Button onClick={onDownload} disabled={!wm} className="mt-auto w-full translate-y-0 pt-0" variant="studio">
+        <Button onClick={onDownload} disabled={!wm} className="mt-auto w-full" variant="studio">
           <Download className="h-4 w-4" /> Download Logo
         </Button>
       </div>
