@@ -9,7 +9,8 @@ function loadFont(f: FontDef): Promise<OTFont> {
     cache.set(
       f.id,
       (async () => {
-        const { parse } = await import("opentype.js");
+        const mod: any = await import("opentype.js");
+        const parse = mod.parse ?? mod.default.parse;
         const buf = await (await fetch(f.url)).arrayBuffer();
         return parse(buf) as unknown as OTFont;
       })(),
