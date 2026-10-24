@@ -1,6 +1,6 @@
 import type { FontDef, Logo } from "./logos";
 
-type OTFont = { getPath: (t: string, x: number, y: number, s: number) => { toPathData: (d: number) => string; getBoundingBox: () => { x1: number; y1: number; x2: number; y2: number } }; charToGlyph: (c: string) => { advanceWidth?: number }; unitsPerEm: number };
+type OTFont = { getPath: (t: string, x: number, y: number, s: number) => { toPathData: (d: number) => string }; charToGlyph: (c: string) => { advanceWidth?: number; getMetrics: () => { xMin: number; xMax: number; yMin: number; yMax: number } }; unitsPerEm: number };
 
 const cache = new Map<string, Promise<OTFont>>();
 
@@ -31,11 +31,12 @@ export async function buildWordmark(font: FontDef): Promise<Wordmark> {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const ch of "SHOLOK") {
     const p = ot.getPath(ch, x, 0, size);
-    const b = p.getBoundingBox();
-    minX = Math.min(minX, b.x1); minY = Math.min(minY, b.y1);
-    maxX = Math.max(maxX, b.x2); maxY = Math.max(maxY, b.y2);
+    const g = ot.charToGlyph(ch);
+    const m = g.getMetrics();
+    minX = Math.min(minX, x + m.xMin * scale); maxX = Math.max(maxX, x + m.xMax * scale);
+    minY = Math.min(minY, -m.yMax * scale); maxY = Math.max(maxY, -m.yMin * scale);
     parts.push(p.toPathData(2));
-    x += (ot.charToGlyph(ch).advanceWidth ?? 0) * scale + track;
+    x += (g.advanceWidth ?? 0) * scale + track;
   }
   const pad = 16;
   const w = maxX - minX + pad * 2;
